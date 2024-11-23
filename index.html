@@ -111,7 +111,7 @@
         // 加载表白内容（可选：从 GitHub 获取并显示）
         async function loadMessages() {
             try {
-                const response = await fetch('https://api.github.com/repos/Jeffrey-done/lovewall/contents/messages');
+                const response = await fetch('https://api.github.com/repos/Jeffrey-done//confession-wall/contents/messages');
                 const data = await response.json();
 
                 const messageContainer = document.getElementById('messageContainer');
