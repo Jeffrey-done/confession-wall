@@ -1,32 +1,28 @@
-const GITHUB_TOKEN = "your_github_token"; // 从环境变量中获取
-const REPO_OWNER = "your_github_username"; // GitHub 用户名
-const REPO_NAME = "confession-wall"; // 仓库名
+document.getElementById('submit').addEventListener('click', async () => {
+    const message = document.getElementById('message').value.trim();
+    const name = document.getElementById('name').value.trim();
 
-async function handleRequest(request) {
-    const { message, name } = await request.json();
-
-    const content = Buffer.from(`Message: ${message}\nName: ${name || '匿名'}\n`).toString('base64');
-    const filename = `message_${Date.now()}.txt`;
-
-    const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filename}`, {
-        method: 'PUT',
-        headers: {
-            Authorization: `Bearer ${GITHUB_TOKEN}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            message: `Add new message from ${name || '匿名'}`,
-            content: content
-        })
-    });
-
-    if (response.ok) {
-        return new Response('Message uploaded successfully', { status: 200 });
-    } else {
-        return new Response('Failed to upload message', { status: 500 });
+    if (!message) {
+        alert('表白内容不能为空！');
+        return;
     }
-}
 
-addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request));
+    try {
+        const response = await fetch('https://love.jeffreyy.workers.dev/submit-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, name })
+        });
+
+        if (response.ok) {
+            alert('表白提交成功！');
+            document.getElementById('message').value = '';
+            document.getElementById('name').value = '';
+        } else {
+            alert('提交失败，请稍后再试！');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('发生错误，请稍后再试！');
+    }
 });
